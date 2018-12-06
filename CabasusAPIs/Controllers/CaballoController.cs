@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -29,14 +29,20 @@ namespace CabasusAPIs.Controllers
                 Guid guid = Guid.NewGuid();
                 id_generado = guid.ToString().Replace("-", "");
                 id_generado = id_generado.Substring(0, 30);
-                if (c.Insertar("insert into caballos values('" + id_generado + "', '" + datos.nombre + "'," + datos.peso + "," + datos.altura + ",'" + datos.raza + "','" + datos.fecha_nacimiento + "'," + datos.genero + ",'" + datos.foto + "'," + id_usuario + "," + datos.avena + ");"))
+                if (c.Insertar("insert into caballos values('" + id_generado + "', '" + datos.nombre + "'," + datos.peso + "," + datos.altura + ", " + datos.raza + ",'" + datos.fecha_nacimiento + "'," + datos.genero + ",'" + datos.foto + "', '" + id_usuario + "'," + datos.avena + ");"))
                 {
                     idConseguido = false;
                 }
             }
             return id_generado;
         }
-
+        [HttpPost("actualizarFoto")]
+        public bool actualizarFoto([FromBody] JObject data)
+        {
+            Modelos.caballos datos = data.ToObject<Modelos.caballos>();
+            Conexion c = new Conexion();
+            return c.Insertar("update caballos set foto='"+datos.foto+"' where id_caballo ='"+datos.id_caballo+"';");
+        }
         [HttpPut("actualizar")]
         public bool actualizar([FromBody] JObject data)
         {
