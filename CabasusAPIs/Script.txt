@@ -1,0 +1,206 @@
+drop database if exists SUSABAC;
+create database  SUSABAC;
+use SUSABAC;
+create table usuarios(
+id_usuario nvarchar(30) primary key,
+nombre nvarchar(50),
+email nvarchar(50) unique,
+contrasena text,
+foto text,
+fecha_nacimiento nvarchar(20)
+);
+
+create table caballos(
+id_caballo  nvarchar(30) primary key,
+nombre nvarchar(50),
+peso double,
+altura double,
+raza int,
+fecha_nacimiento nvarchar(20),
+genero int,
+foto text,
+fk_usuario nvarchar(30),
+avena double,
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade
+);
+
+create table dispositivos(
+id_dispositivo nvarchar(50) primary key,
+s_o nvarchar(10),
+fk_usuario  nvarchar(30),
+tonken_fb text,
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade
+);
+
+create table compartidos(
+fk_usuario  nvarchar(30),
+fk_caballo  nvarchar(30),
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade,
+foreign key (fk_caballo) references caballos (id_caballo) on update cascade on delete cascade,
+primary key(fk_usuario,fk_caballo)
+);
+
+create table actividades(
+id_actividad int primary key auto_increment,
+fk_usuario nvarchar(30),
+fk_caballo nvarchar(30),
+fecha date,
+duracion int,
+intensidad text,
+camina double,
+trota double,
+galopa double,
+latitudes text,
+longitudes text,
+factor_fitness int,
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade,
+foreign key (fk_caballo) references caballos (id_caballo) on update cascade on delete cascade
+);
+
+create table hot_tips(
+id_ht int primary key auto_increment,
+mensaje nvarchar(200),
+fecha date,
+imagen text
+);
+
+create table diario(
+id_diario  nvarchar(30) primary key,
+mensaje nvarchar(150),
+privacidad int,
+fk_usuario nvarchar(30),
+fk_caballo nvarchar(30),
+fecha date,
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade,
+foreign key (fk_caballo) references caballos (id_caballo) on update cascade on delete cascade
+);
+
+create table mensajes_en_espera(
+id_mensaje varchar(30),
+mensaje text,
+token_emisor text,
+fecha date,
+fk_usuario nvarchar(30),
+fk_caballo nvarchar(30),
+foreign key (fk_usuario) references usuarios (id_usuario) on update cascade on delete cascade,
+foreign key (fk_caballo) references caballos (id_caballo) on update cascade on delete cascade
+);
+
+create table foto_diario(
+foto nvarchar(50) primary key,
+fk_diario nvarchar(30),
+foreign key (fk_diario) references diario (id_diario) on update cascade on delete cascade
+);
+
+
+
+drop PROCEDURE if exists caballos_usuario;
+delimiter //
+CREATE PROCEDURE caballos_usuario (in in_user nvarchar(30))
+   BEGIN
+
+drop temporary table if exists tmp_caballos_user;
+CREATE TEMPORARY TABLE tmp_caballos_user AS
+
+         (select id_caballo,caballos.nombre as nombre_caballo, caballos.foto, caballos.fk_usuario as id_usuario from caballos 
+         inner join usuarios ON caballos.fk_usuario = usuarios.id_usuario where id_usuario=in_user 
+         
+         union select caballos.id_caballo, caballos.nombre as nombre_caballo, caballos.foto,caballos.fk_usuario as id_usuario from compartidos
+         inner join usuarios on compartidos.fk_usuario = usuarios.id_usuario
+         inner join caballos ON compartidos.fk_caballo = caballos.id_caballo where usuarios.id_usuario= in_user);
+         
+         select id_caballo, nombre_caballo, tmp_caballos_user.foto as foto_caballo, tmp_caballos_user.id_usuario, usuarios.nombre as nombre_usuario, usuarios.foto as foto_usuario from tmp_caballos_user 
+         inner join usuarios on usuarios.id_usuario =  tmp_caballos_user.id_usuario;
+                   
+   END//
+delimiter //
+
+
+drop PROCEDURE if exists miembros_chat;
+delimiter //
+CREATE PROCEDURE miembros_chat (in in_horse nvarchar(30))
+   BEGIN
+   
+   select usuarios.id_usuario, usuarios.nombre from caballos 
+   inner join usuarios ON caballos.fk_usuario = usuarios.id_usuario 
+   where id_caballo=in_horse
+   union
+   select usuarios.id_usuario, usuarios.nombre from compartidos 
+   inner join usuarios on compartidos.fk_usuario=usuarios.id_usuario
+   where fk_caballo = in_horse;
+                   
+   END//
+delimiter //
+
+delimiter //
+
+CREATE PROCEDURE actividades_rango_fechas (
+in _fk_usuario nvarchar(30),
+in _fk_caballo nvarchar(30),
+in fecha_inicio date,
+in fecha_fin date)
+  BEGIN
+       select *
+      from actividades
+      where     fk_usuario = _fk_usuario
+               && fk_caballo = _fk_caballo
+              && fecha > fecha_inicio
+              && fecha < fecha_fin;
+   END//
+
+delimiter ;
+
+delimiter //
+
+CREATE PROCEDURE diarios_rango_fechas (
+in _fk_usuario nvarchar(30),
+in _fk_caballo nvarchar(30),
+in fecha_inicio date,
+in fecha_fin date)
+  BEGIN
+       select *
+      from diario
+      where     fk_usuario = _fk_usuario
+               && fk_caballo = _fk_caballo
+              && fecha >= fecha_inicio
+              && fecha <= fecha_fin;
+   END//
+
+delimiter ;
+
+delimiter //
+
+CREATE PROCEDURE diarios_privados (
+in _fk_usuario nvarchar(30),
+in _fk_caballo nvarchar(30),
+in fecha_inicio date,
+in fecha_fin date)
+  BEGIN
+       select *
+      from diario
+      where     fk_usuario = _fk_usuario
+               && fk_caballo = _fk_caballo
+              && fecha >= fecha_inicio
+              && fecha <= fecha_fin
+              && privacidad = 1;
+   END//
+
+delimiter ;
+
+
+delimiter //
+
+CREATE PROCEDURE diarios_publicos (
+in _fk_caballo nvarchar(30),
+in fecha_inicio date,
+in fecha_fin date)
+  BEGIN
+       select *
+      from diario
+      where   fk_caballo = _fk_caballo
+              && fecha >= fecha_inicio
+              && fecha <= fecha_fin
+              && privacidad = 0;
+   END//
+
+delimiter ;
