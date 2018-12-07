@@ -50,29 +50,37 @@ namespace CabasusAPIs.Controllers
             bool insertar = false;
             bool idConseguido = true;
             string id_generado = "";
-            while (idConseguido)
+
+            //consultar para comprobar si el usuario ya existe
+            var con = new Conexion();
+            var consulta = con.Consultar("SELECT * FROM usuarios WHERE email='" + datos.email + "'");
+
+            if (consulta.Rows.Count < 1)
             {
-                Guid guid = Guid.NewGuid();
-                id_generado = guid.ToString().Replace("-", "");
-                id_generado = id_generado.Substring(0, 30);
-                insertar = c.Insertar("insert into usuarios values ('" + id_generado +"','" + datos.nombre + "','" + datos.email + "','" + HashSHA1(datos.contrasena) + "','" + datos.foto + "','"+datos.fecha_nacimiento+"');");
+                while (idConseguido)
+                {
+                    Guid guid = Guid.NewGuid();
+                    id_generado = guid.ToString().Replace("-", "");
+                    id_generado = id_generado.Substring(0, 30);
+                    insertar = c.Insertar("insert into usuarios values ('" + id_generado + "','" + datos.nombre + "','" + datos.email + "','" + HashSHA1(datos.contrasena) + "','" + datos.foto + "','" + datos.fecha_nacimiento + "');");
+                    if (insertar)
+                    {
+                        idConseguido = false;
+                    }
+                }
                 if (insertar)
                 {
-                    idConseguido = false;
-                }
-            }
-            if (insertar)
-            {
-                if (!new Conexion().Insertar("insert into dispositivos values('" + datos.id_dispositivo + "','" + datos.SO + "','" + id_generado + "','" + datos.tokenFB + "')"))
-                {
-                    new Conexion().Insertar("update dispositivos set token_fb='" + datos.tokenFB + "' where id_dispositivo='" + datos.id_dispositivo + "'");
-                }
+                    if (!new Conexion().Insertar("insert into dispositivos values('" + datos.id_dispositivo + "','" + datos.SO + "','" + id_generado + "','" + datos.tokenFB + "')"))
+                    {
+                        new Conexion().Insertar("update dispositivos set token_fb='" + datos.tokenFB + "' where id_dispositivo='" + datos.id_dispositivo + "'");
+                    }
 
-                return BuildToken(datos.email, datos.contrasena);
+                    return BuildToken(datos.email, datos.contrasena);
 
+                }
+                    return BadRequest();
             }
-            else
-                return BadRequest();
+                return BadRequest("el usuario ya existe");
 
         }
 
