@@ -37,6 +37,14 @@ namespace CabasusAPIs.Controllers
             return c.Insertar("update usuarios set foto='" + URL + "' where id_usuario='" + id_usuario + "'");
         }
 
+        [HttpGet("actualizarTokenFB")]
+        public bool actualizarTokenFB(string tokenFB,string id_dispositivo)
+        {
+            var id_usuario = User.FindFirst("id")?.Value;
+            Conexion c = new Conexion();
+            return c.Insertar("update dispositivos set tonken_fb='" + tokenFB + "', fk_usuario='" + id_usuario + "' where id_dispositivo='" + id_dispositivo + "'");
+        }
+
         public static string HashSHA1(string value)
         {
             var sha1 = SHA1.Create();
