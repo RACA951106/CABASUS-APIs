@@ -38,7 +38,7 @@ namespace CabasusAPIs.Controllers
         }
 
         [HttpGet("actualizarTokenFB")]
-        public bool actualizarTokenFB(string tokenFB,string id_dispositivo)
+        public bool actualizarTokenFB(string tokenFB, string id_dispositivo)
         {
             var id_usuario = User.FindFirst("id")?.Value;
             Conexion c = new Conexion();
