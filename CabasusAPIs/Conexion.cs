@@ -47,6 +47,7 @@ namespace CabasusAPIs
             }
             catch(Exception ex) 
             {
+                conexion.Close();
                 Console.WriteLine("//////////////////////////////////" + ex.Message + "//////////////////////////////////");
                 return false;
             }
