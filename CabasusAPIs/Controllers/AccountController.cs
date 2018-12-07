@@ -35,7 +35,7 @@ namespace CabasusAPIs.Controllers
             {
                 if (!new Conexion().Insertar("insert into dispositivos values('" + dat.id_dispositivo + "','" + dat.SO + "','" + id_usuario + "','" + dat.TokenFB + "')"))
                 {
-                    new Conexion().Insertar("update dispositivos set token_fb='" + dat.TokenFB + "' where id_dispositivo='" + dat.id_dispositivo + "'");
+                    new Conexion().Insertar("update dispositivos set tonken_fb='" + dat.TokenFB + "', fk_usuario='" + id_usuario + "' where id_dispositivo='" + dat.id_dispositivo + "'");
                 }
                 return request;
             }
@@ -72,7 +72,7 @@ namespace CabasusAPIs.Controllers
                 {
                     if (!new Conexion().Insertar("insert into dispositivos values('" + datos.id_dispositivo + "','" + datos.SO + "','" + id_generado + "','" + datos.tokenFB + "')"))
                     {
-                        new Conexion().Insertar("update dispositivos set token_fb='" + datos.tokenFB + "' where id_dispositivo='" + datos.id_dispositivo + "'");
+                        new Conexion().Insertar("update dispositivos set tonken_fb='" + datos.tokenFB + "', fk_usuario='" + id_generado + "' where id_dispositivo='" + datos.id_dispositivo + "'");
                     }
 
                     return BuildToken(datos.email, datos.contrasena);
