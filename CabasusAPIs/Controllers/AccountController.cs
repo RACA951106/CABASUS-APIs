@@ -11,6 +11,8 @@ using Newtonsoft.Json.Linq;
 using CabasusAPIs.Modelos;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
+using System.Net.Mail;
+using System.Net;
 
 namespace CabasusAPIs.Controllers
 {
@@ -82,6 +84,52 @@ namespace CabasusAPIs.Controllers
             }
                 return BadRequest("el usuario ya existe");
 
+        }
+
+        [HttpGet("recuperarPass")]
+        public async Task<bool> recuperarPass(string email, int idioma)
+        {
+            var smtpClient = new SmtpClient
+            {
+                Host = "smtp.gmail.com", // set your SMTP server name here
+                Port = 587, // Port 
+                EnableSsl = true,
+                Credentials = new NetworkCredential("devteam@cabasus.com", "Admin1234.")
+            };
+
+            Conexion c = new Conexion();
+            var consulta = c.Consultar("SELECT * FROM usuarios WHERE email='" + email + "'");
+
+            if (consulta.Rows.Count >= 1)
+            {
+                Guid guid = Guid.NewGuid();
+                var pass = guid.ToString().Replace("-", "");
+                pass = pass.Substring(0, 10);
+
+                var body = "";
+                var subject = "";
+
+                switch (idioma)
+                {
+                    case 1:
+                        subject = "Recuperar Contraseña";
+                        body = "hola " + consulta.Rows[0]["nombre"] + ", para ingresar de nuevo a tu cuenta en CABASUS por favor utilizar la siguiente" +
+                        " contraseña y despues cambiala en los ajustes de tu cuenta :) \r\n \r\n " + pass + " \r\n \r\n Atte: CABASUS Team México " +
+                        "\r\n \r\n \r\n \r\n \r\n \r\n \r\n \r\n \r\n \r\n (Por favor no contestes este mensaje)";
+                        break;
+                }
+
+                using (var message = new MailMessage("devteam@cabasus.com", email)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    await smtpClient.SendMailAsync(message);
+                    return c.Insertar("UPDATE usuarios SET contrasena= '" + HashSHA1(pass) + "' WHERE email='" + email + "'");
+                }
+            }
+            return false;
         }
 
         private IActionResult BuildToken(string usuario, string contrasena)
