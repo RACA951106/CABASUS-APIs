@@ -165,7 +165,12 @@ namespace CabasusAPIs.Controllers
                     return Ok(new
                     {
                         token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = expiration
+                        expiration = expiration,
+                        id_usuario = consulta.Rows[0]["id_usuario"].ToString(),
+                        email = consulta.Rows[0]["email"].ToString(),
+                        fecha_nacimiento = consulta.Rows[0]["fecha_nacimiento"].ToString(),
+                        nombre = consulta.Rows[0]["nombre"].ToString(),
+                        foto = consulta.Rows[0]["foto"].ToString(),
                     });
                 }
                 else
