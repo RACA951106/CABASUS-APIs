@@ -20,7 +20,7 @@ namespace CabasusAPIs.Controllers
             var id_usuario = User.FindFirst("id")?.Value;
             Modelos.usuarios datos = data.ToObject<Modelos.usuarios>();
             Conexion c = new Conexion();
-            return c.Insertar("update usuarios set nombre='" + datos.nombre + "',contrasena='" + HashSHA1(datos.contrasena) + "',foto='" + datos.foto + "', fecha_nacimiento= '" + datos.fecha_nacimiento + "' where id_usuario='" + id_usuario + "'");
+            return c.Insertar("update usuarios set nombre='" + datos.nombre + "',contrasena='" + HashSHA1(datos.contrasena) + "', fecha_nacimiento= '" + datos.fecha_nacimiento + "' where id_usuario='" + id_usuario + "'");
         }
         [HttpGet("consultar")]
         public DataTable consultar()
