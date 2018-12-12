@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CabasusAPIs.Modelos
+﻿namespace CabasusAPIs.Modelos
 {
     public class caballos
     {
@@ -15,7 +10,6 @@ namespace CabasusAPIs.Modelos
         public string fecha_nacimiento { get; set; }
         public int genero { get; set; }
         public string foto { get; set; }
-        public string fk_usuario { get; set; }
-        public int avena { get; set; }
+        public double avena { get; set; }
     }
 }
