@@ -55,7 +55,6 @@ namespace CabasusAPIs.Controllers
         {
             Conexion c = new Conexion();
             return c.Consultar("select * from caballos where id_caballo='" + id_caballo + "'");
-
         }
         [HttpGet("consultaridusuario")]
         public DataTable consultaridusuario()
@@ -71,7 +70,18 @@ namespace CabasusAPIs.Controllers
         {
             Conexion c = new Conexion();
             return c.Insertar("delete from caballos where id_caballo='"+id_caballo+"'");
-
+        }
+        [HttpGet("caballosAleatorios")]
+        public DataTable caballosAleatorios()
+        {
+            Conexion c = new Conexion();
+            return c.Consultar("SELECT * FROM caballos ORDER BY RAND() LIMIT 20;");
+        }
+        [HttpGet("buscarCaballos")]
+        public DataTable buscarCaballos(string refe)
+        {
+            Conexion c = new Conexion();
+            return c.Consultar("SELECT * FROM caballos where nombre like '%" + refe + "%'");
         }
     }
 }

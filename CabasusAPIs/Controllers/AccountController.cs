@@ -31,7 +31,7 @@ namespace CabasusAPIs.Controllers
             var id_usuario = TestJwtSecurityTokenHandler(obtenerjson.Value.token);
             if (request==BadRequest())
             {
-                return BadRequest();
+                return BadRequest("usuario mal o contra mal");
             }
             else
             {
