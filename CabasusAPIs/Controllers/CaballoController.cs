@@ -63,7 +63,6 @@ namespace CabasusAPIs.Controllers
 
             Conexion c = new Conexion();
             return c.Consultar("select * from caballos where fk_usuario='" + id_usuario + "'");
-
         }
         [HttpDelete("eliminar/{id_caballo}")]
         public bool eliminar(int id_caballo)

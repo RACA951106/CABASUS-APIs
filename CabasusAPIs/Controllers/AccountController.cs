@@ -64,7 +64,7 @@ namespace CabasusAPIs.Controllers
                     Guid guid = Guid.NewGuid();
                     id_generado = guid.ToString().Replace("-", "");
                     id_generado = id_generado.Substring(0, 30);
-                    insertar = c.Insertar("insert into usuarios values ('" + id_generado + "','" + datos.nombre + "','" + datos.email + "','" + HashSHA1(datos.contrasena) + "','" + datos.foto + "','" + datos.fecha_nacimiento + "');");
+                    insertar = c.Insertar("insert into usuarios values ('" + id_generado + "','" + datos.nombre + "','" + datos.email + "','" + HashSHA1(datos.contrasena) + "','" + datos.foto + "','" + datos.fecha_nacimiento + "','"+datos.descripcion+"','"+datos.telefono+"');");
                     if (insertar)
                     {
                         idConseguido = false;
@@ -171,6 +171,8 @@ namespace CabasusAPIs.Controllers
                         fecha_nacimiento = consulta.Rows[0]["fecha_nacimiento"].ToString(),
                         nombre = consulta.Rows[0]["nombre"].ToString(),
                         foto = consulta.Rows[0]["foto"].ToString(),
+                        descripcion= consulta.Rows[0]["descripcion"].ToString(),
+                        telefono= consulta.Rows[0]["telefono"].ToString(),
                     });
                 }
                 else

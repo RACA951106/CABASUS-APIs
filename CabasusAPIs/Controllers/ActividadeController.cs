@@ -15,7 +15,7 @@ namespace CabasusAPIs.Controllers
         {
             Modelos.actividades datos = data.ToObject<Modelos.actividades>();
             Conexion c = new Conexion();
-            return c.Insertar("insert into actividades values (null, '"+datos.fk_usuario+"', '"+ datos.fk_caballo+ "', '"+ datos.fecha + "', "+ datos.duracion + ", '"+ datos.intensidad + "', "+ datos.camina +", "+ datos.trota + ", "+ datos.galopa +", '"+ datos.latitudes +"', '"+datos.longitudes+"', "+datos.factor_fitness+");");
+            return c.Insertar("insert into actividades values (null, '"+datos.fk_usuario+"', '"+ datos.fk_caballo+ "', '"+ datos.fecha + "', "+ datos.duracion + ", '"+ datos.intensidad + "', "+ datos.camina +", "+ datos.trota + ", "+ datos.galopa +", '"+ datos.latitudes +"', '"+datos.longitudes+"', "+datos.factor_fitness+","+datos.tipo_actividad+");");
         }
 
         [HttpGet("consultar")]

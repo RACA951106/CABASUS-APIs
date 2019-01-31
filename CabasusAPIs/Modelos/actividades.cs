@@ -14,6 +14,7 @@ namespace CabasusAPIs.Modelos
         public string latitudes { get; set; }
         public string longitudes { get; set; }
         public int factor_fitness { get; set; }
+        public int tipo_actividad { get; set; }
     }
     public class actividadesRango
     {
